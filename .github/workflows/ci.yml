@@ -1,0 +1,44 @@
+name: Server CI
+
+on:
+  pull_request:
+    branches:
+      - "*"
+  push:
+    branches:
+      - "main"
+
+env:
+  POM_PATH: "./FreTreOperation/pom.xml"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "corretto"
+          java-version: "17"
+          cache: "maven"
+
+      - name: Build with maven
+        run: mvn -f ${{ env.POM_PATH }} --batch-mode --update-snapshots verify
+
+      - name: Move artifacts for upload
+        if: ${{ success() && github.event_name == 'push' && github.ref_name == 'main' }} # mainへのpush時のみ実行
+        run: mkdir staging && cp ./*/target/*.{jar,war} staging
+
+      - name: Upload artifacts
+        if: ${{ success() && github.event_name == 'push' && github.ref_name == 'main' }} # mainへのpush時のみ実行
+        uses: actions/upload-artifact@v4
+        with:
+          name: Package
+          path: staging
