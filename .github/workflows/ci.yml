@@ -32,10 +32,6 @@ jobs:
       - name: Build with maven
         run: mvn -f ${{ env.POM_PATH }} --batch-mode --update-snapshots verify
 
-      - name: Move artifacts for upload
-        if: ${{ success() && github.event_name == 'push' && github.ref_name == 'main' }} # mainへのpush時のみ実行
-        run: mkdir staging && cp ./*/target/*.{jar,war} staging
-
       - name: Upload artifacts
         if: ${{ success() && github.event_name == 'push' && github.ref_name == 'main' }} # mainへのpush時のみ実行
         uses: actions/upload-artifact@v4
