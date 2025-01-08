@@ -1,0 +1,17 @@
+{
+  "emulators": {
+    "singleProjectMode": true,
+    "ui": {
+      "host": "localhost",
+      "enabled": true
+    },
+    "firestore": {
+      "host": "localhost",
+      "port": 8080
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
